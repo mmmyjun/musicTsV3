@@ -50,31 +50,27 @@
     </div>
 </template>
 <script setup lang="ts">
-import { ref, shallowRef,useSlots, computed, onMounted, nextTick, CSSProperties, reactive } from "vue"
-import { ElMessage, ElMessageBox } from 'element-plus'
+import { ref, shallowRef, computed, withDefaults } from "vue"
+import { ElMessage } from 'element-plus'
 import volume from './volume.vue'
 import modeOfRepeat from './modeOfRepeat.vue'
 import timeProgress from './timeProgress.vue'
 import musicTime from './musicTime.vue'
 
-const props = defineProps({
-  modelValue: {
-    default: {
-        id: '',
-        name: '',
-        artist: '',
-        poster: '',
-        lrc: [],
-        loadingLrc: false
-    }
-  },
-  currentTime: {type: Number, default: 0},
-  totalTime: {type: Number, default: 0},
-  repeatMode: { default: 0},
+const props = withDefaults(defineProps<{
+    modelValue: TypePlaying;
+    currentTime: number;
+    totalTime: number;
+    repeatMode: number;
+}>(), {
+    currentTime: 0,
+    totalTime: 0,
+    repeatMode: 0,
 })
 const emit = defineEmits(['getLrc','update:modelValue','update:currentTime','update:totalTime','update:repeatMode', 'playNextOne', 'setPlayedListVisible']);
 
 const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry/i.test(navigator.userAgent)
+
 
 const setPlayedListVisible = (e: any): void => {
     emit('setPlayedListVisible')
@@ -136,7 +132,7 @@ const changeAudio = (e: Event) => {
     }
     let idx = -1
     if (audioRef.value && audioRef.value!.currentTime && typeof audioRef.value!.currentTime == 'number' && currentPlayingObj.value.lrc && currentPlayingObj.value.lrc.length) {
-        idx = currentPlayingObj.value.lrc.findLastIndex((f: TypeOfLrc) => f.time <= audioRef.value!.currentTime)
+        idx = JSON.parse(JSON.stringify(currentPlayingObj.value.lrc)).reverse().findIndex((f: TypePlaying) => f.time <= audioRef.value!.currentTime)
     }
     if (idx == -1) {
         return
@@ -154,7 +150,7 @@ const cacheWidth = ref(0)
 const changeCurTime = (e: number) => {
     let curT = parseInt(String(e * totalTime.value / 100))
     currentTime.value = curT
-    audioRef.value!.currentTime = curT
+    audioRef.value && (audioRef.value!.currentTime = curT)
 }
 const propgressEvent = (e: Event) => {
     const buffered = audioRef.value?.buffered!;
@@ -195,14 +191,14 @@ const toPauseAudio = (e: Event) => {
     currentPlayingObj.value.isPlaying = false
 }
 
-
 // duration(总时长)等信息读取到了， 已准备就绪可以开始播放了
 const loadedmetadata = (e: Event) => {
-    console.log('loadedmetadata~~')
     currentTime.value = 0
-    totalTime.value = audioRef.value!.duration || 0
+    let dr = audioRef.value!.duration
+    totalTime.value = typeof dr == 'number' ? dr : 0
+    console.log('loadedmetadata~~', JSON.stringify(audioRef.value!.duration), JSON.stringify(dr), typeof dr == 'number', JSON.stringify(totalTime.value))
     let localV_ = localStorage.getItem('_volume');
-    if (audioRef.value as HTMLAudioElement && audioRef.value?.volume) {
+    if (audioRef.value?.volume) {
         if (!localV_) {
             localStorage.setItem('_volume', '0.4');
         }
@@ -216,8 +212,8 @@ const tryToAutoPlay = () => {
     }
     catch (err) {
         console.log('auto play failed because of browser security policy. ', err)
-        currentTime.value = 0
-        totalTime.value = 0
+        // currentTime.value = 0
+        // totalTime.value = 0
     }
 }
 

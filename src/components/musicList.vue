@@ -50,7 +50,7 @@ import { ref, defineProps,defineEmits, computed, withDefaults } from "vue"
 import reactJump from './reactJump.vue'
 
 const props = withDefaults(defineProps<{
-    modelValue: TypePlaying[];
+    modelValue: Array<TypePlaying>;
     currentPlayingObj: TypePlaying;
     hideListNumResult?: boolean;
 }>(), {

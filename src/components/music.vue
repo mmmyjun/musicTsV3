@@ -74,9 +74,8 @@
     </div>
 </template>
 <script setup lang="ts">
-import { ref, shallowRef, computed, onMounted, nextTick, CSSProperties, reactive } from "vue"
-import type { Events, Ref } from 'vue'
-import { Search, Picture as IconPicture, Download, Delete, Upload, UserFilled, User, CirclePlus, Remove } from '@element-plus/icons-vue'
+import { ref, onMounted } from "vue"
+import { Search, Picture as IconPicture, Download, Delete, Upload, User, CirclePlus, Remove } from '@element-plus/icons-vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 
 import musicListComp from './musicList.vue'
@@ -92,8 +91,8 @@ const totalTime = ref<number>(0)
 let __repeat_mode = localStorage.getItem('__repeat_mode') // 播放重复模式
 let repeatMode = ref<RepeatMode>(__repeat_mode ? JSON.parse(__repeat_mode) : RepeatMode.byOrder)
 
-const musicList = ref<TypeOfMusicList[]>([])
-const musicPlayed = ref<TypeOfMusicList[]>([]) // 播放过的歌曲列表
+const musicList = ref<TypePlaying[]>([])
+const musicPlayed = ref<TypePlaying[]>([]) // 播放过的歌曲列表
 
 const curMusicRef = ref<typeof curMusic | null>()
 
@@ -102,7 +101,8 @@ const currentPlayingObj = ref<TypePlaying>({
     name: '',
     artist: '',
     poster: '',
-    lrc: []
+    lrc: [],
+    loadingLrc: false
 })
 
 // 播放列表是否显示
@@ -152,7 +152,8 @@ const setLocal = (item: TypePlaying, removeId?: number | string) => {
             if (musicPlayed.value.length) {
                 currentPlayingObj.value = {
                     ...musicPlayed.value[0],
-                    isPlaying: true
+                    isPlaying: true,
+                    lrc: currentPlayingObj.value.lrc
                 }
             }
             return
@@ -256,7 +257,8 @@ const nextPlay = (hasErrorPlay?: boolean): void => {
             currentPlayingObj.value = {
                 ...musicPlayed.value[0],
                 hasError: false,
-                isPlaying: true
+                isPlaying: true,
+                lrc: currentPlayingObj.value.lrc
             }
             showPlayedListVisible.value = true
         }
@@ -269,7 +271,10 @@ const nextPlay = (hasErrorPlay?: boolean): void => {
     }
     if (repeatMode.value == 0) {
         // 列表播放
-        currentPlayingObj.value = musicPlayed.value[newIndex]
+        currentPlayingObj.value = {
+            ...musicPlayed.value[newIndex],
+            lrc: currentPlayingObj.value.lrc
+        }
     } else if (repeatMode.value == 2) {
         // 随机播放
         let copyP = JSON.parse(JSON.stringify(musicPlayed.value))
@@ -284,7 +289,7 @@ const nextPlay = (hasErrorPlay?: boolean): void => {
     getLrc(currentPlayingObj.value)
 }
 
-const setMusicPlayed = (arg: TypeOfMusicList[]) => {
+const setMusicPlayed = (arg: TypePlaying[]) => {
     musicPlayed.value = arg
 }
 const clearCacheData = () => {
@@ -310,7 +315,8 @@ const clearCacheData = () => {
                 name: '',
                 artist: '',
                 poster: '',
-                lrc: []
+                lrc: [],
+                loadingLrc: false
             }
             showPlayedListVisible.value = false
             musicList.value = []
@@ -318,38 +324,43 @@ const clearCacheData = () => {
         })
         .catch(() => { })
 }
-const handleCommand = (command: string | number | object, row: TypePlaying) => {
-    let curObj = row;
-    let etName = encodeURIComponent(curObj.name)
+const handleCommand = (command: string | number | object, row?: TypePlaying) => {
+    if (row) {
+        let curObj = row
+        let etName = encodeURIComponent(curObj.name)
 
-    if (command == 'removeById') {
-        setLocal(curObj, curObj.id)
-    } else if (command == 'beTop') {
-        musicPlayed.value = [curObj, ...musicPlayed.value.filter(e => e.id != curObj.id)]
-        localStorage.setItem('_playedList', JSON.stringify(musicPlayed.value))
-    } else if (command == 'downLong') {
-        window.open(`/api/music/download/${curObj.id}?name=encodeComponent(${curObj.name})`)
-    } else if (command == 'downLrc') {
-        if (!curObj.lrc || !curObj.lrc.length) {
-            ElMessage.warning(`"${curObj.name}"暂无相关歌词~`)
-        } else {
-            window.open(`/api/music/lrc/download/${curObj.id}?name=${etName}`)
-        }
-    } else if (command == 'addToPlayList') {
-        if (musicPlayed.value.some(mcd => mcd.id == curObj.id)) {
-            ElMessage.warning(`"${curObj.name}"已存在播放列表中~`)
-        } else {
-            musicPlayed.value = [curObj, ...musicPlayed.value]
+        if (command == 'removeById') {
+            setLocal(curObj, curObj.id)
+        } else if (command == 'beTop') {
+            musicPlayed.value = [curObj, ...musicPlayed.value.filter(e => e.id != curObj.id)]
             localStorage.setItem('_playedList', JSON.stringify(musicPlayed.value))
+        } else if (command == 'downLong') {
+            window.open(`/api/music/download/${curObj.id}?name=encodeComponent(${curObj.name})`)
+        } else if (command == 'downLrc') {
+            if (!curObj.lrc || !curObj.lrc.length) {
+                ElMessage.warning(`"${curObj.name}"暂无相关歌词~`)
+            } else {
+                window.open(`/api/music/lrc/download/${curObj.id}?name=${etName}`)
+            }
+        } else if (command == 'addToPlayList') {
+            if (musicPlayed.value.some(mcd => mcd.id == curObj.id)) {
+                ElMessage.warning(`"${curObj.name}"已存在播放列表中~`)
+            } else {
+                musicPlayed.value = [curObj, ...musicPlayed.value]
+                localStorage.setItem('_playedList', JSON.stringify(musicPlayed.value))
+            }
+        } else if (command == "searchArtist") {
+            keyword.value = curObj.artist
+            toSearch()
+        } else if (command == "searchLongName") {
+            keyword.value = curObj.name
+            toSearch()
         }
-    } else if (command == "removeAllHistory") {
-        clearCacheData()
-    } else if (command == "searchArtist") {
-        keyword.value = curObj.artist
-        toSearch()
-    } else if (command == "searchLongName") {
-        keyword.value = curObj.name
-        toSearch()
+    }
+    else {
+        if (command == "removeAllHistory") {
+            clearCacheData()
+        }
     }
 }
 </script>
