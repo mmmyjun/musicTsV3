@@ -1,0 +1,11 @@
+yarn create vite musictsv3 --template vue-ts
+http://localhost:8000/api/music/list?s=%E6%A2%A8
+http://localhost:8000/api/music/parse?id=793977
+
+
+找不到模块“./App.vue”或其相应的类型声明。ts(2307) =>
+vue-shims.d.ts
+
+yarn add element-plus
+
+const musicList: Ref<TypeOfMusicList[]> = ref([])优化为 => const musicList = ref<TypeOfMusicList[]>([])
