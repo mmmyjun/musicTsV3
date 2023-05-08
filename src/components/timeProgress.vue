@@ -8,7 +8,7 @@
     </div>
 </template>
 <script lang="ts" setup>
-import { ref, defineProps, defineEmits, computed, render, h, onMounted, onUnmounted, shallowRef, VNode, nextTick } from 'vue'
+import { ref, computed, onMounted, onUnmounted, shallowRef, nextTick } from 'vue'
 const emit = defineEmits(['change', 'emitEnd'])
 const props = defineProps({
     value: { type: Number, default: 0 },

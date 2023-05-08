@@ -11,7 +11,7 @@
     </el-dialog>
 </template>
 <script setup lang="ts">
-import { ref, useSlots, computed, defineEmits } from 'vue'
+import { computed } from 'vue'
 const props = defineProps({
     loading: { type: Boolean, default: true },
     value: { type: Number, default: 0 },

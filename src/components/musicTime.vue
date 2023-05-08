@@ -4,7 +4,7 @@
     </div>
 </template>
 <script lang="ts" setup>
-import { ref, defineProps, computed } from 'vue'
+import { ref, computed } from 'vue'
 
 const props = defineProps({
     currentTime: { type: Number, default: 0},

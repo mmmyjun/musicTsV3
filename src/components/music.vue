@@ -6,7 +6,7 @@
             <div class="search-container">
                 <el-input v-model="keyword" clearable placeholder="输入歌名/歌手名开始搜索" @keyup.enter="toSearch">
                     <template #append>
-                        <el-button type="primary" :icon="Search" @click="toSearch" />
+                        <el-button type="primary" :disabled="!keyword.trim()" :icon="Search" @click="toSearch" />
                     </template>
                 </el-input>
                 <el-dropdown class="op-global" trigger="click" @command="handleCommand">
@@ -88,6 +88,11 @@ const keyword = ref('') // 关键词
 const currentTime = ref<number>(0)
 const totalTime = ref<number>(0)
 
+enum RepeatMode {
+    byOrder,
+    single,
+    random
+}
 let __repeat_mode = localStorage.getItem('__repeat_mode') // 播放重复模式
 let repeatMode = ref<RepeatMode>(__repeat_mode ? JSON.parse(__repeat_mode) : RepeatMode.byOrder)
 
@@ -125,6 +130,10 @@ onMounted(() => {
 })
 
 const toSearch = (): void => {
+    if (!keyword.value.trim()) {
+        ElMessage.warning(`关键词不能为空!`)
+        return
+    }
     loadingList.value = true
     fetch('/api/music/list?s=' + encodeURIComponent(keyword.value)).then(res => {
         if (res.ok) {

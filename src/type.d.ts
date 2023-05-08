@@ -6,8 +6,3 @@ declare interface TypePlaying {
     lrc: Array<TypePlaying>,
     [propName: string]: any
 }
-declare enum RepeatMode {
-    byOrder,
-    single,
-    random
-}

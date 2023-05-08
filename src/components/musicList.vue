@@ -46,7 +46,7 @@
     </div>
 </template>
 <script setup lang="ts">
-import { ref, defineProps,defineEmits, computed, withDefaults } from "vue"
+import { computed, withDefaults } from "vue"
 import reactJump from './reactJump.vue'
 
 const props = withDefaults(defineProps<{

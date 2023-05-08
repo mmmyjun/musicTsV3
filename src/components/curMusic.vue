@@ -71,7 +71,11 @@ const emit = defineEmits(['getLrc','update:modelValue','update:currentTime','upd
 
 const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry/i.test(navigator.userAgent)
 
-
+enum RepeatMode {
+    byOrder,
+    single,
+    random
+}
 const setPlayedListVisible = (e: any): void => {
     emit('setPlayedListVisible')
 }
@@ -164,7 +168,7 @@ const propgressEvent = (e: Event) => {
     cacheWidth.value = (bufferedEnd / totalTime.value) * 100
 }
 
-const errorPlay = (e: any): void => {
+const errorPlay = (): void => {
     ElMessage.error(`"${currentPlayingObj.value.name}"播放错误,已移除`)
     currentPlayingObj.value.hasError = true
      emit('playNextOne', true)
@@ -206,12 +210,14 @@ const loadedmetadata = (e: Event) => {
     }
     tryToAutoPlay()
 }
-const tryToAutoPlay = () => {
+const tryToAutoPlay = async () => {
     try {
-        audioRef.value?.play()
+      await audioRef.value?.play()
+      startPlay()
     }
     catch (err) {
         console.log('auto play failed because of browser security policy. ', err)
+        errorPlay()
         // currentTime.value = 0
         // totalTime.value = 0
     }

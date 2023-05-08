@@ -7,7 +7,7 @@
     </div>
 </template>
 <script setup lang="ts">
-import { ref, shallowRef, computed, CSSProperties, reactive } from "vue"
+import { computed } from "vue"
 
 const props = defineProps({
     running: { type: Boolean, default: true },
@@ -45,16 +45,17 @@ const selfStyleD = computed((e) => {
     background: transparent;
     border-radius: 50%;
     padding: 8px;
-    transform: rotate(180deg);
+    transform: translate(-50%, -50%) rotate(180deg);
     position: absolute;
-    top: 0;
+    top: 50%;
+    left: 50%;
 }
 .rect-jump-comp div {
     flex: 1;
     padding: 0 1px;
     height: 10px;
     background: #fff;
-    border: 1px solid #cecece;
+    border: .5px solid #f6e7e7;
 }
 </style>
 <style>
