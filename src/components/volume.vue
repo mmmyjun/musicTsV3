@@ -30,25 +30,26 @@ const emit = defineEmits<{
     (e: 'change', volValue: string): void
 }>()
 
+const defaultVol = 0.4
 let localV_ = localStorage.getItem('_volume');
-const value: Ref<number> = localV_ ? ref(Number(JSON.parse(localV_))) : ref(0)
+const value: Ref<number> = localV_ ? ref(Number(JSON.parse(localV_))) : ref(defaultVol)
 const prevVol: Ref<number> = ref(0)
 const updateVol = (e: string | number): void => {
     localStorage.setItem('_volume', String(e))
     emit('change', String(e))
-    prevVol.value = Number(e) || 0
+    prevVol.value = Number(e) || defaultVol
 }
 const toSetValue = (e: boolean = true): void => {
     if (!e) {
         emit('change', String(0))
     } else {
-        emit('change', String(prevVol.value || 0.4))
+        emit('change', String(prevVol.value || defaultVol))
     }
     if (e) {
-        value.value = prevVol.value ? prevVol.value : 0.4
+        value.value = prevVol.value ? prevVol.value : defaultVol
         return
     }
-    value.value = 0
+    value.value = defaultVol
 }
 const formatTooltip = (val: number) => {
     return val * 100 + '%'
