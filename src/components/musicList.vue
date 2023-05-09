@@ -6,7 +6,6 @@
             <slot name="content" :row="item">
                 <slot name="leftContent" :row="item">
                     <div class="left cursorPointer" @click="clickLeftIcon(item)" :key="item.id + item.name">
-                        <!-- v-loading="item.id == currentPlayingObj.id && currentPlayingObj.loading" -->
                         <el-image :src="item.poster" style="width: 44px;height: 44px;border-radius: 50%;" @error="errorLoadImg">
                             <template #error>
                                 <el-skeleton class="imgIsError" style="width: 44px; height: 44px" >

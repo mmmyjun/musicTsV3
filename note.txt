@@ -8,4 +8,130 @@ vue-shims.d.ts
 
 yarn add element-plus
 
-const musicList: Ref<TypeOfMusicList[]> = ref([])优化为 => const musicList = ref<TypeOfMusicList[]>([])
+
+
+
+
+
+dist/index.html                     0.49 kB
+dist/assets/index-36fb1412.css    328.75 kB │ gzip:  45.37 kB
+dist/assets/index-c74e0cd8.js   1,037.45 kB │ gzip: 327.62 kB
+
+npm i vite-plugin-compression -D
+filter：过滤器，对哪些类型的文件进行压缩，默认为 ‘/.(js|mjs|json|css|html)$/i’
+verbose: true：是否在控制台输出压缩结果，默认为 true
+threshold：启用压缩的文件大小限制，单位是字节，默认为 0;threshold: 1024000 // 对大于 1mb 的文件进行压缩
+disable: false：是否禁用压缩，默认为 false
+deleteOriginFile：压缩后是否删除原文件，默认为 false
+algorithm：采用的压缩算法，默认是 gzip
+ext：生成的压缩包后缀
+
+
+配置
+rollupOptions: {
+    // output: {
+    //   manualChunks: {
+    //   }
+    // }
+    output: {
+    chunkFileNames: 'js/[name]-[hash].js',  // 引入文件名的名称
+    entryFileNames: 'js/[name]-[hash].js',  // 包的入口文件名称
+    assetFileNames: '[ext]/[name]-[hash].[ext]' // 资源文件像 字体，图片等
+    }
+}后:
+dist/index.html                  0.48 kB
+dist/css/index-71876751.css    328.75 kB │ gzip:  45.37 kB
+dist/js/index-f0f9da85.js    1,037.39 kB │ gzip: 327.61 kB
+
+
+配置：将需要分离 的包 单独的打包出来
+manualChunks(id: any): string {
+    if (id.includes("node_modules")) {
+    return id
+        .toString()
+        .split("node_modules/")[1]
+        .split("/")[0]
+        .toString();
+    }
+},后
+dist/index.html                           1.60 kB
+dist/css/index-92c79dd4.css               7.14 kB │ gzip:   2.19 kB
+dist/css/element-plus-472d715e.css      321.61 kB │ gzip:  43.54 kB
+dist/js/lodash-unified-4ed993c7.js        0.00 kB │ gzip:   0.02 kB
+dist/js/vue-demi-4ed993c7.js              0.00 kB │ gzip:   0.02 kB
+dist/js/vue-4ed993c7.js                   0.00 kB │ gzip:   0.02 kB
+dist/js/memoize-one-297ddbcb.js           0.52 kB │ gzip:   0.31 kB
+dist/js/escape-html-1d60d822.js           0.53 kB │ gzip:   0.36 kB
+dist/js/normalize-wheel-es-ed76fb12.js    3.26 kB │ gzip:   1.52 kB
+dist/js/@vueuse-e0e37641.js               8.28 kB │ gzip:   3.54 kB
+dist/js/@floating-ui-682dc3ac.js          9.71 kB │ gzip:   4.06 kB
+dist/js/@ctrl-f8748455.js                14.13 kB │ gzip:   4.71 kB
+dist/js/dayjs-b3a9045c.js                15.06 kB │ gzip:   5.81 kB
+dist/js/async-validator-dee29e8b.js      16.93 kB │ gzip:   5.40 kB
+dist/js/@popperjs-c75af06c.js            19.77 kB │ gzip:   7.35 kB
+dist/js/index-3617887b.js                24.12 kB │ gzip:   8.36 kB
+dist/js/lodash-es-36eb724a.js            26.87 kB │ gzip:   9.61 kB
+dist/js/@vue-615c8e3e.js                 66.29 kB │ gzip:  26.46 kB
+dist/js/@element-plus-3382a2d4.js       195.37 kB │ gzip:  54.67 kB
+dist/js/element-plus-5e7d008f.js        635.00 kB │ gzip: 197.58 kB
+
+
+配置 按照模块分开打包，大模块独立打包，小模块合并打包，这样就不会出现一大堆小文件了。
+manualChunks(id: any): string {
+    if (id.includes('node_modules')) {
+    const arr = id.toString().split('node_modules/')[1].split('/')
+    switch (arr[0]) {
+        case '@kangc':
+        case '@naturefw':
+        case '@popperjs':
+        case '@vue':
+        case 'axios':
+        case 'element-plus':
+        return '_' + arr[0]
+        break
+        default:
+        return '__vendor'
+        break
+    }
+    }
+},后
+dist/index.html                        0.87 kB
+dist/css/index-92c79dd4.css            7.14 kB │ gzip:   2.19 kB
+dist/css/_element-plus-472d715e.css  321.61 kB │ gzip:  43.54 kB
+dist/js/_@popperjs-c75af06c.js        19.77 kB │ gzip:   7.35 kB
+dist/js/index-ef0ad4b4.js             23.82 kB │ gzip:   8.23 kB
+dist/js/_@vue-c507d7ff.js             66.29 kB │ gzip:  26.46 kB
+dist/js/__vendor-6814378d.js         291.60 kB │ gzip:  89.90 kB
+dist/js/_element-plus-78c4f178.js    634.70 kB │ gzip: 197.44 kB
+
+
+配置target: 'esnext',
+    minify: 'esbuild' // 混淆器，terser构建后文件体积更小
+后:
+dist/index.html                        0.87 kB
+dist/css/index-92c79dd4.css            7.14 kB │ gzip:   2.19 kB
+dist/css/_element-plus-16558732.css  321.38 kB │ gzip:  43.50 kB
+dist/js/_@popperjs-c45de710.js        19.74 kB │ gzip:   7.35 kB
+dist/js/index-db892251.js             23.59 kB │ gzip:   8.12 kB
+dist/js/_@vue-56be11cd.js             66.27 kB │ gzip:  26.45 kB
+dist/js/__vendor-f053a4a6.js         291.43 kB │ gzip:  89.88 kB
+dist/js/_element-plus-4ea82869.js    631.40 kB │ gzip: 196.93 kB
+
+
+修改:
+case '@naturefw': // 自然框架
+case '@popperjs':
+case '@vue':
+case 'lodash':
+case 'element-plus': // UI 库
+case '@element-plus': // 图标
+后:
+dist/index.html                        0.92 kB
+dist/css/index-92c79dd4.css            7.14 kB │ gzip:   2.19 kB
+dist/css/_element-plus-16558732.css  321.38 kB │ gzip:  43.50 kB
+dist/js/_@popperjs-c45de710.js        19.74 kB │ gzip:   7.35 kB
+dist/js/index-8ae2abd2.js             23.62 kB │ gzip:   8.13 kB
+dist/js/_@vue-e00bfe83.js             66.27 kB │ gzip:  26.45 kB
+dist/js/__vendor-6a03e462.js          95.91 kB │ gzip:  34.22 kB
+dist/js/_@element-plus-0c795a89.js   195.37 kB │ gzip:  54.67 kB
+dist/js/_element-plus-9fd6eb85.js    631.40 kB │ gzip: 196.93 kB

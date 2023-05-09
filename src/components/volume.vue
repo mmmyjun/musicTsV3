@@ -23,8 +23,7 @@
     </div>
 </template>
 <script setup lang="ts">
-import { reactive, ref, shallowRef, defineProps, defineEmits, computed, onMounted, onUnmounted, watch, defineComponent, inject, h, watchEffect, toRefs, getCurrentInstance } from "vue"
-import type { Ref } from 'vue'
+import { ref } from "vue"
 
 const emit = defineEmits<{
     (e: 'change', volValue: string): void
@@ -32,8 +31,8 @@ const emit = defineEmits<{
 
 const defaultVol = 0.4
 let localV_ = localStorage.getItem('_volume');
-const value: Ref<number> = localV_ ? ref(Number(JSON.parse(localV_))) : ref(defaultVol)
-const prevVol: Ref<number> = ref(0)
+const value = localV_ ? ref<number>(Number(JSON.parse(localV_))) : ref<number>(defaultVol)
+const prevVol = ref<number>(0)
 const updateVol = (e: string | number): void => {
     localStorage.setItem('_volume', String(e))
     emit('change', String(e))

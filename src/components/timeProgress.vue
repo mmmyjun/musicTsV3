@@ -13,12 +13,9 @@ const emit = defineEmits(['change', 'emitEnd'])
 const props = defineProps({
     value: { type: Number, default: 0 },
     cacheWidth: { type: Number, default: 0 },
-    currentTime: { type: Number, default: 0 },
     totalTime: { type: Number, default: 0 },
 })
-let currentTime = computed(() => {
-    return formatT(props.currentTime)
-})
+
 let totalTime = computed(() => {
     return props.totalTime
 })
