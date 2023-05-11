@@ -82,7 +82,6 @@ import musicListComp from './musicList.vue'
 import loadingGlobal from './loadingGlobal.vue'
 import curMusic from './curMusic.vue'
 
-
 const loadingList = ref<boolean>(false)
 const keyword = ref('') // 关键词
 const currentTime = ref<number>(0)
@@ -162,7 +161,8 @@ const setLocal = (item: TypePlaying, removeId?: number | string) => {
                 currentPlayingObj.value = {
                     ...musicPlayed.value[0],
                     isPlaying: true,
-                    lrc: currentPlayingObj.value.lrc
+                    lrc: currentPlayingObj.value.lrc,
+                    loadingLrc: false
                 }
             }
             return
@@ -194,11 +194,14 @@ const getLrc = async (item: TypePlaying) => {
     if (!item.id) return
 
     currentPlayingObj.value.hasError = false
+    currentPlayingObj.value.loadingLrc = true
+
 
     let exist = musicPlayed.value.filter(md => md.id).filter((e: TypePlaying) => e.id == item.id)
     if (exist.length) {
         if (item.id === currentPlayingObj.value.id) {
-            currentPlayingObj.value.loadingLrc = false
+            document.title = currentPlayingObj.value.name
+
             let curIsPlay = currentPlayingObj.value.isPlaying
             if (curIsPlay) {
                 currentPlayingObj.value.isPlaying = false
@@ -207,6 +210,7 @@ const getLrc = async (item: TypePlaying) => {
                 currentPlayingObj.value.isPlaying = true
                 curMusicRef.value?.tryToAutoPlay()
             }
+            currentPlayingObj.value.loadingLrc = false
             if (exist[0].lrc && exist[0].lrc.length) return
         } else {
             currentTime.value = 0;
@@ -218,14 +222,20 @@ const getLrc = async (item: TypePlaying) => {
                 ...exist[0],
                 isPlaying: true,
                 lrc: lastLrc,
-                loading: false
+                loadingLrc: false
             }
+            document.title = currentPlayingObj.value.name
         }
     } else {
         setLocal(currentPlayingObj.value)
     }
     if (!item.lrc || !item.lrc.length || !currentPlayingObj.value.lrc || !currentPlayingObj.value.lrc.length) {
-        currentPlayingObj.value.loadingLrc = true
+        currentPlayingObj.value = {
+            ...item,
+            lrc: [],
+            isPlaying: false,
+            loadingLrc: true
+        }
 
         await fetch('/api/music/lrc/' + item.id).then(res => {
             console.log('getLrc res', res)
@@ -233,11 +243,10 @@ const getLrc = async (item: TypePlaying) => {
                 return res.json()
             }
         }).then(e => {
-            currentPlayingObj.value = {
-                ...item,
-                lrc: e ? e.data : [],
-                isPlaying: true,
-            }
+            currentPlayingObj.value.lrc = e ? e.data : []
+            currentPlayingObj.value.isPlaying = true
+
+            document.title = currentPlayingObj.value.name
             setLocal(currentPlayingObj.value)
         }).catch(e => {
             console.log('catch lrc', e)
@@ -262,7 +271,7 @@ const nextPlay = (hasErrorPlay?: boolean): void => {
         if (!musicPlayed.value.length) {
             currentPlayingObj.value.id = '';
             showPlayedListVisible.value = false
-        } else {
+        } else {            
             currentPlayingObj.value = {
                 ...musicPlayed.value[0],
                 hasError: false,
@@ -334,7 +343,9 @@ const clearCacheData = () => {
         .catch(() => { })
 }
 const handleCommand = (command: string | number | object, row?: TypePlaying) => {
-    if (row) {
+    if (command == "removeAllHistory") {
+        clearCacheData()
+    } else if (row) {
         let curObj = row
         let etName = encodeURIComponent(curObj.name)
 
@@ -366,11 +377,6 @@ const handleCommand = (command: string | number | object, row?: TypePlaying) => 
             toSearch()
         }
     }
-    else {
-        if (command == "removeAllHistory") {
-            clearCacheData()
-        }
-    }
 }
 </script>
 <style>
@@ -386,7 +392,7 @@ const handleCommand = (command: string | number | object, row?: TypePlaying) => 
 }
 
 .music-container .bottom-list {
-    position: absolute;
+    position: fixed;
     bottom: 0;
     width: 100%;
 }
@@ -430,7 +436,7 @@ const handleCommand = (command: string | number | object, row?: TypePlaying) => 
 
 .playedList-container .music-list-container,
 .playedList-container .title {
-    background-color: #121212;
+    background-color: #121212 !important;
 }
 
 .playedList-container .title {

@@ -1,21 +1,17 @@
 <template>
     <div class="cur-music-container" v-if="currentPlayingObj.id">
         <div class="left" @click="getLrc(currentPlayingObj)">
-           <el-skeleton animated class="imgIsLoading" v-if="currentPlayingObj.loadingLrc">
-                <template #template>
-                    <el-skeleton-item variant="image" style="width: 88px; height: 88px;border-radius: 50%;" />
-                </template>
-            </el-skeleton>
-            <div class="bgImg" v-else :style="styleImg(currentPlayingObj)"></div>
-
-            <el-icon v-show="!currentPlayingObj.hasError" class="upIcon VideoPlay cursorPointer"
-                @click.stop="toPlayAudio" v-if="!currentPlayingObj.isPlaying">
-                <VideoPlay />
-            </el-icon>
-            <el-icon v-show="!currentPlayingObj.hasError" class="upIcon VideoPause cursorPointer"
-                @click.stop="toPauseAudio" v-else>
-                <VideoPause />
-            </el-icon>
+            <div class="bgImg" v-loading="currentPlayingObj.loadingLrc" :style="styleImg(currentPlayingObj)"></div>
+            <template v-if="!currentPlayingObj.loadingLrc">
+                <el-icon v-show="!currentPlayingObj.hasError" class="upIcon VideoPlay cursorPointer"
+                     @click.stop="toPlayAudio" v-if="!currentPlayingObj.isPlaying">
+                     <VideoPlay />
+                 </el-icon>
+                 <el-icon v-show="!currentPlayingObj.hasError" class="upIcon VideoPause cursorPointer"
+                     @click.stop="toPauseAudio" v-else>
+                     <VideoPause />
+                 </el-icon>
+            </template>
         </div>
         <div class="center">
             <div class="musicName">
@@ -27,7 +23,7 @@
                 <div class="time-pro-left">
                     <timeProgress :currentTime="currentTime" @emitEnd="endPlay" :totalTime="totalTime"  :value="currentTWidth" :cacheWidth="cacheWidth" @change="changeCurTime" />
                     <audio style="height: 0;opacity:0" ref="audioRef" :src="currentPlayingObj.url" @progress="propgressEvent"
-                        @loadedmetadata="loadedmetadata" preload="auto" @timeupdate="changeAudio"
+                        @loadedmetadata="loadedmetadata" @durationchange="durationchange" preload="auto" @timeupdate="changeAudio"
                         @error="errorPlay" @play="startPlay" @ended="endPlay" @pause="pausePlay" />
                     <musicTime :currentTime="currentTime" :totalTime="totalTime" />
                 </div>
@@ -197,10 +193,14 @@ const toPauseAudio = (e: Event) => {
 
 // duration(总时长)等信息读取到了， 已准备就绪可以开始播放了
 const loadedmetadata = (e: Event) => {
-    currentTime.value = 0
+    console.log('loadedmetadata~~')
+}
+// 整个方法比loadedmetadata兼容性好
+const durationchange = (e: Event) => {
+    console.log(e, 'durationchange')
+     currentTime.value = 0
     let dr = audioRef.value!.duration
     totalTime.value = typeof dr == 'number' ? dr : 0
-    console.log('loadedmetadata~~', JSON.stringify(audioRef.value!.duration), JSON.stringify(dr), typeof dr == 'number', JSON.stringify(totalTime.value))
     let localV_ = localStorage.getItem('_volume');
     if (audioRef.value?.volume) {
         if (!localV_) {
@@ -233,7 +233,7 @@ const endPlay = (event?: any): void => {
 }
 
 const playState = computed(() => {
-    return currentPlayingObj.value.isPlaying ? 'running' : 'paused';
+    return !currentPlayingObj.value.loadingLrc && currentPlayingObj.value.isPlaying ? 'running' : 'paused';
 })
 
 const styleImg = (obj: TypePlaying) => {
@@ -269,6 +269,9 @@ defineExpose({
     display: flex;
     justify-content: center;
     align-items: center;
+}
+.cur-music-container .left {
+    border-radius: 50%;
 }
 
 @keyframes rotate360 {

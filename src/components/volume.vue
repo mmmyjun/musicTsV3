@@ -51,7 +51,7 @@ const toSetValue = (e: boolean = true): void => {
     value.value = defaultVol
 }
 const formatTooltip = (val: number) => {
-    return val * 100 + '%'
+    return val * 100
 }
 </script>
 <style scoped>

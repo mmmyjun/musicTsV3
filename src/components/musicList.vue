@@ -16,13 +16,13 @@
                             </template>
                             <template #placeholder>
                                 <el-skeleton animated class="imgIsLoading">
-                                     <template #template>
+                                    <template #template>
                                         <el-skeleton-item class="defaultImg" variant="image" style="width: 44px; height: 44px" />
                                     </template>
                                 </el-skeleton>
                             </template>
                         </el-image>
-                        <reactJump v-show="item.id === currentPlayingObj.id" :running="(item.id === currentPlayingObj.id) && currentPlayingObj.isPlaying" />
+                        <reactJump v-show="item.id === currentPlayingObj.id" :running="!currentPlayingObj.loadingLrc && (item.id === currentPlayingObj.id) && currentPlayingObj.isPlaying" />
                     </div>
                 </slot>
                 <slot name="centerContent" :row="item">

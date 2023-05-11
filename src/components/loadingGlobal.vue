@@ -66,7 +66,7 @@ const dialogVisible = computed({
 }
 @keyframes circleBig {
     from {
-        transform: scale(0.6);
+        transform: scale(0.3);
         opacity: 1;
     }
     to {

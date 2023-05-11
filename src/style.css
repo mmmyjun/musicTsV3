@@ -144,3 +144,19 @@ button:focus-visible {
   height: 24px;
   fill: #fff;
 }
+
+.el-loading-mask {
+  border-radius: 50%;
+}
+
+.el-input-group__append .el-button--primary {
+  background-color: #409eff !important;
+  border-color: #409eff !important;
+  color: #fff !important;
+  border-top-left-radius: 0 !important;
+  border-bottom-left-radius: 0 !important;
+}
+.el-input-group__append .el-button--primary.is-disabled {
+  background-color: #a0cfff !important;
+  border-color: #a0cfff !important;
+}

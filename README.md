@@ -1,18 +1,23 @@
-# Vue 3 + TypeScript + Vite
-
-This template should help get you started developing with Vue 3 and TypeScript in Vite. The template uses Vue 3 `<script setup>` SFCs, check out the [script setup docs](https://v3.vuejs.org/api/sfc-script-setup.html#sfc-script-setup) to learn more.
-
-## Recommended IDE Setup
-
-- [VS Code](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur) + [TypeScript Vue Plugin (Volar)](https://marketplace.visualstudio.com/items?itemName=Vue.vscode-typescript-vue-plugin).
-
-## Type Support For `.vue` Imports in TS
-
-TypeScript cannot handle type information for `.vue` imports by default, so we replace the `tsc` CLI with `vue-tsc` for type checking. In editors, we need [TypeScript Vue Plugin (Volar)](https://marketplace.visualstudio.com/items?itemName=Vue.vscode-typescript-vue-plugin) to make the TypeScript language service aware of `.vue` types.
-
-If the standalone TypeScript plugin doesn't feel fast enough to you, Volar has also implemented a [Take Over Mode](https://github.com/johnsoncodehk/volar/discussions/471#discussioncomment-1361669) that is more performant. You can enable it by the following steps:
-
-1. Disable the built-in TypeScript Extension
-   1. Run `Extensions: Show Built-in Extensions` from VSCode's command palette
-   2. Find `TypeScript and JavaScript Language Features`, right click and select `Disable (Workspace)`
-2. Reload the VSCode window by running `Developer: Reload Window` from the command palette.
+# 音乐播放器 Vue 3 + TypeScript + Vite
+实现功能
+- 搜索: 根据关键词歌曲或者歌手名搜索,关键词不为空;loading动画
+- 列表展示: 
+  搜索出的列表(a)和待播放列表(b)
+  1.封面加载中动画；加载失败后显示默认的图片；正在播放歌曲封面上的柱子动画
+  2.歌曲歌手名展示
+  3.歌词展示:正在下载歌词、暂无歌词、显示歌词
+  4.可操作的菜单dropdown: 加入到b、移除、搜索歌手、搜索歌曲、下载歌曲、下载歌词等
+  5.b最多展示5首歌曲，多出的显示滚动条
+  6.对b本地存储，用于下次进入页面后初始化b
+  7.对播放错误的歌曲提示播放错误并自动在b中移除
+- 当前播放歌曲:
+  1.封面旋转动画
+  2.可拖动进度条、歌曲缓存进度显示、当前时长/总时长
+  3.可调整歌曲音量大小，移动端已隐藏此图标；音量大小本地存储
+  4.待播放列表是否展示的图标
+  5.播放模式: 列表播放、单曲循环、随机播放
+  6.从待播放列表本地存储中取第一首歌曲
+  7.对播放错误的歌曲提示播放错误后自动移除当前歌曲并按当前播放模式播放下一首
+- 其他
+  深浅色主题
+  清空本地存储的数据

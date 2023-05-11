@@ -12,7 +12,7 @@ yarn add element-plus
 
 
 
-
+【打包体积太大处理步骤记录:】********************************************************************
 dist/index.html                     0.49 kB
 dist/assets/index-36fb1412.css    328.75 kB │ gzip:  45.37 kB
 dist/assets/index-c74e0cd8.js   1,037.45 kB │ gzip: 327.62 kB
@@ -135,3 +135,54 @@ dist/js/_@vue-e00bfe83.js             66.27 kB │ gzip:  26.45 kB
 dist/js/__vendor-6a03e462.js          95.91 kB │ gzip:  34.22 kB
 dist/js/_@element-plus-0c795a89.js   195.37 kB │ gzip:  54.67 kB
 dist/js/_element-plus-9fd6eb85.js    631.40 kB │ gzip: 196.93 kB
+总时长18.19s
+
+
+// import music from './components/music.vue'
+改成
+const music = defineAsyncComponent(() =>
+  import('./components/music.vue')
+)
+后:
+dist/index.html                        0.96 kB
+dist/css/index-25bce4bf.css            1.99 kB │ gzip:   0.91 kB
+dist/css/music-f0ca1755.css            5.15 kB │ gzip:   1.51 kB
+dist/css/_element-plus-16558732.css  321.38 kB │ gzip:  43.50 kB
+dist/js/index-882e0eea.js              2.23 kB │ gzip:   1.14 kB
+dist/js/_@popperjs-c45de710.js        19.74 kB │ gzip:   7.35 kB
+dist/js/music-2c739e84.js             22.68 kB │ gzip:   7.65 kB
+dist/js/_@vue-0ee94573.js             67.52 kB │ gzip:  27.01 kB
+dist/js/__vendor-d3515d06.js          95.91 kB │ gzip:  34.23 kB
+dist/js/_@element-plus-e3033a64.js   195.37 kB │ gzip:  54.67 kB
+dist/js/_element-plus-3af5bc5a.js    631.40 kB │ gzip: 196.93 kB
+总时长21.76s
+
+const musicListComp = defineAsyncComponent(() =>
+    import('./musicList.vue')
+)
+const loadingGlobal = defineAsyncComponent(() =>
+    import('./loadingGlobal.vue')
+)
+const curMusic = defineAsyncComponent(() =>
+    import('./curMusic.vue')
+)
+后
+dist/index.html                        0.96 kB
+dist/css/loadingGlobal-79977d98.css    0.76 kB │ gzip:   0.38 kB
+dist/css/music-f4e9449b.css            0.94 kB │ gzip:   0.41 kB
+dist/css/musicList-f01a08e0.css        1.15 kB │ gzip:   0.52 kB
+dist/css/index-25bce4bf.css            1.99 kB │ gzip:   0.91 kB
+dist/css/curMusic-36fa49a2.css         2.31 kB │ gzip:   0.82 kB
+dist/css/_element-plus-16558732.css  321.38 kB │ gzip:  43.50 kB
+dist/js/loadingGlobal-d62edb5d.js      1.10 kB │ gzip:   0.63 kB
+dist/js/index-3a9c63cc.js              2.23 kB │ gzip:   1.14 kB
+dist/js/musicList-580f83f7.js          2.83 kB │ gzip:   1.29 kB
+dist/js/music-e41796ac.js              8.49 kB │ gzip:   2.97 kB
+dist/js/curMusic-080a6c4b.js          12.20 kB │ gzip:   4.52 kB
+dist/js/_@popperjs-c45de710.js        19.74 kB │ gzip:   7.35 kB
+dist/js/_@vue-0ee94573.js             67.52 kB │ gzip:  27.01 kB
+dist/js/__vendor-d3515d06.js          95.91 kB │ gzip:  34.23 kB
+dist/js/_@element-plus-e3033a64.js   195.37 kB │ gzip:  54.67 kB
+dist/js/_element-plus-3af5bc5a.js    631.40 kB │ gzip: 196.93 kB
+ built in 41.80s
+这里会导致总时长变长，所以暂时标记下，不见得动态组件一定是优化打包的好方式!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
