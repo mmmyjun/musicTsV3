@@ -19,6 +19,7 @@ a {
   color: #646cff;
   text-decoration: inherit;
 }
+
 a:hover {
   color: #535bf2;
 }
@@ -47,9 +48,11 @@ button {
   cursor: pointer;
   transition: border-color 0.25s;
 }
+
 button:hover {
   border-color: #646cff;
 }
+
 button:focus,
 button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
@@ -71,13 +74,16 @@ button:focus-visible {
     color: #213547;
     background-color: #ffffff;
   }
+
   a:hover {
     color: #747bff;
   }
+
   button {
     background-color: #f9f9f9;
   }
 }
+
 @media (prefers-color-scheme: dark) {
   :root {
     color: #fff;
@@ -93,14 +99,17 @@ button:focus-visible {
     background-color: #333;
   }
 
-  .musicName, .searchResult {
+  .musicName,
+  .searchResult {
     color: #333;
   }
+
   .playedList-lists .musicName {
     color: #b9b9b9;
   }
 
-  .cur-music-container .long, .cur-music-container .long-name {
+  .cur-music-container .long,
+  .cur-music-container .long-name {
     color: #fff;
   }
 
@@ -145,6 +154,10 @@ button:focus-visible {
   fill: #fff;
 }
 
+.icon-m.colorBlack {
+  fill: #000;
+}
+
 .el-loading-mask {
   border-radius: 50%;
 }
@@ -156,7 +169,14 @@ button:focus-visible {
   border-top-left-radius: 0 !important;
   border-bottom-left-radius: 0 !important;
 }
+
 .el-input-group__append .el-button--primary.is-disabled {
   background-color: #a0cfff !important;
   border-color: #a0cfff !important;
+}
+
+.flexcenter {
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }

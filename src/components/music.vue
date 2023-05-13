@@ -1,7 +1,7 @@
 <template>
     <div class="music-container">
         <loadingGlobal v-model:loading="loadingList" />
-        
+
         <div class="music-inner">
             <div class="search-container">
                 <el-input v-model="keyword" clearable placeholder="输入歌名/歌手名开始搜索" @keyup.enter="toSearch">
@@ -57,8 +57,12 @@
                                     <template #dropdown>
                                         <el-dropdown-menu>
                                             <el-dropdown-item command="beTop" :icon="Upload">置顶</el-dropdown-item>
-                                            <el-dropdown-item command="searchArtist" :icon="User">搜索【<div class="dropdownSearchName textHiddenEllipsis">{{ row.artist}}</div>】</el-dropdown-item>
-                                            <el-dropdown-item command="searchLongName" :icon="Search">搜索【<div class="dropdownSearchName textHiddenEllipsis">{{ row.name}}</div>】</el-dropdown-item>
+                                            <el-dropdown-item command="searchArtist" :icon="User">搜索【<div
+                                                    class="dropdownSearchName textHiddenEllipsis">{{ row.artist }}</div>
+                                                】</el-dropdown-item>
+                                            <el-dropdown-item command="searchLongName" :icon="Search">搜索【<div
+                                                    class="dropdownSearchName textHiddenEllipsis">{{ row.name }}</div>
+                                                】</el-dropdown-item>
                                             <el-dropdown-item command="removeById" :icon="Delete">移除</el-dropdown-item>
                                             <el-dropdown-item command="downLong" :icon="Download">下载歌曲</el-dropdown-item>
                                             <el-dropdown-item command="downLrc" :icon="Download">下载歌词</el-dropdown-item>
@@ -106,7 +110,8 @@ const currentPlayingObj = ref<TypePlaying>({
     artist: '',
     poster: '',
     lrc: [],
-    loadingLrc: false
+    loadingLrc: false,
+    needLoadDuration: true // duration总时长加载好后才代表歌曲可以被播放了，为true是正在加载得意思
 })
 
 // 播放列表是否显示
@@ -119,7 +124,9 @@ if (localHis.length) {
     showPlayedListVisible.value = true;
     currentPlayingObj.value = {
         ...localHis[0],
-        isPlaying: false
+        isPlaying: false,
+        loadingLrc: false,
+        needLoadDuration: true
     }
     musicPlayed.value = localHis
 }
@@ -162,7 +169,7 @@ const setLocal = (item: TypePlaying, removeId?: number | string) => {
                     ...musicPlayed.value[0],
                     isPlaying: true,
                     lrc: currentPlayingObj.value.lrc,
-                    loadingLrc: false
+                    loadingLrc: false,
                 }
             }
             return
@@ -222,7 +229,8 @@ const getLrc = async (item: TypePlaying) => {
                 ...exist[0],
                 isPlaying: true,
                 lrc: lastLrc,
-                loadingLrc: false
+                loadingLrc: false,
+                needLoadDuration: true
             }
             document.title = currentPlayingObj.value.name
         }
@@ -234,7 +242,8 @@ const getLrc = async (item: TypePlaying) => {
             ...item,
             lrc: [],
             isPlaying: false,
-            loadingLrc: true
+            loadingLrc: true,
+            needLoadDuration: true
         }
 
         await fetch('/api/music/lrc/' + item.id).then(res => {
@@ -271,7 +280,7 @@ const nextPlay = (hasErrorPlay?: boolean): void => {
         if (!musicPlayed.value.length) {
             currentPlayingObj.value.id = '';
             showPlayedListVisible.value = false
-        } else {            
+        } else {
             currentPlayingObj.value = {
                 ...musicPlayed.value[0],
                 hasError: false,
@@ -304,6 +313,7 @@ const nextPlay = (hasErrorPlay?: boolean): void => {
         }
     }
 
+    currentPlayingObj.value.needLoadDuration = true
     getLrc(currentPlayingObj.value)
 }
 
@@ -385,6 +395,7 @@ const handleCommand = (command: string | number | object, row?: TypePlaying) => 
     height: 100%;
     overflow: hidden;
 }
+
 .music-container .list-container {
     height: calc(100% - 50px);
     position: relative;
@@ -396,6 +407,7 @@ const handleCommand = (command: string | number | object, row?: TypePlaying) => 
     bottom: 0;
     width: 100%;
 }
+
 .list-container.activeHeight .music-list-container {
     height: calc(100% - 100px);
     overflow: auto;
@@ -420,10 +432,12 @@ const handleCommand = (command: string | number | object, row?: TypePlaying) => 
     top: 50%;
     transform: translate(60%, -50%);
 }
+
 .dropdownSearchName {
     width: auto;
     max-width: 200px;
 }
+
 .playedList-lists {
     max-height: 254px;
     overflow: auto;
@@ -446,5 +460,4 @@ const handleCommand = (command: string | number | object, row?: TypePlaying) => 
 .playedList-container .lists {
     border-bottom: 1px solid rgba(255, 255, 255, 0.12);
 }
-
 </style>

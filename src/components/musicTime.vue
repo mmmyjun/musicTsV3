@@ -1,14 +1,14 @@
 <template>
     <div class="music-time-container">
-        {{currentTime}} / {{totalTime}}
+        {{ currentTime }} / {{ totalTime }}
     </div>
 </template>
 <script lang="ts" setup>
 import { ref, computed } from 'vue'
 
 const props = defineProps({
-    currentTime: { type: Number, default: 0},
-    totalTime: { type: Number, default: 0},
+    currentTime: { type: Number, default: 0 },
+    totalTime: { type: Number, default: 0 },
 })
 let currentTime = computed(() => {
     return formatT(props.currentTime)
@@ -19,10 +19,10 @@ let totalTime = computed(() => {
 
 const value = ref(0)
 
-const formatT = (time : number) => {
+const formatT = (time: number) => {
     let integer: number = parseInt(String(time))
-    let minute = String(Math.floor(integer/60)).padStart(2,'0')
-    let ss = String(Math.floor(integer%60)).padStart(2,'0')
+    let minute = String(Math.floor(integer / 60)).padStart(2, '0')
+    let ss = String(Math.floor(integer % 60)).padStart(2, '0')
     return minute + ':' + ss
 }
 
@@ -34,5 +34,4 @@ const formatT = (time : number) => {
     line-height: 20px;
     margin-top: 8px;
 }
-
 </style>

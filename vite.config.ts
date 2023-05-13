@@ -22,16 +22,16 @@ export default defineConfig({
     }
   },
   build: {
-    // terserOptions: {
-    //   compress: {
-    //     //生产环境时移除console
-    //     drop_console: true,
-    //     drop_debugger: true,
-    //   },
-    // },
+    terserOptions: {
+      compress: {
+        //生产环境时移除console
+        drop_console: true,
+        drop_debugger: true,
+      },
+    },
     // reportCompressedSize: true,
     // //   关闭生成map文件 可以达到缩小打包体积
-    // sourcemap: false, // 这个生产环境一定要关闭，不然打包的产物会很大
+    sourcemap: false, // 这个生产环境一定要关闭，不然打包的产物会很大
    
     rollupOptions: {
       output: {

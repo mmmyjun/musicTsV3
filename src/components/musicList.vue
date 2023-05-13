@@ -22,7 +22,7 @@
                                 </el-skeleton>
                             </template>
                         </el-image>
-                        <reactJump v-show="item.id === currentPlayingObj.id" :running="!currentPlayingObj.loadingLrc && (item.id === currentPlayingObj.id) && currentPlayingObj.isPlaying" />
+                        <reactJump v-show="item.id === currentPlayingObj.id" :running="!currentPlayingObj.needLoadDuration && (item.id === currentPlayingObj.id) && currentPlayingObj.isPlaying" />
                     </div>
                 </slot>
                 <slot name="centerContent" :row="item">

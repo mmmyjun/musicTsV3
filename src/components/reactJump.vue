@@ -50,6 +50,7 @@ const selfStyleD = computed((e) => {
     top: 50%;
     left: 50%;
 }
+
 .rect-jump-comp div {
     flex: 1;
     padding: 0 1px;
@@ -63,6 +64,7 @@ const selfStyleD = computed((e) => {
     from {
         height: 90%;
     }
+
     to {
         height: 0;
     }

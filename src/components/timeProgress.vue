@@ -1,9 +1,9 @@
 <template>
     <div class="time-progress-container" ref="timeProgressContainerRef">
-        <el-tooltip v-model:visible="visible" :content="ganTip" placement="top" effect="dark" trigger="click" 
+        <el-tooltip v-model:visible="visible" :content="ganTip" placement="top" effect="dark" trigger="click"
             virtual-triggering :virtual-ref="triggerRef" />
-        <el-slider class="slider-ref" ref="sliderRef" :show-tooltip="false" @mouseenter="mouseenter" @mousemove="mouseenter"  @mouseleave="mouseleave" :modelValue="value"
-            @update:modelValue="updateVal" :formatTooltip="formatTooltip" />
+        <el-slider class="slider-ref" ref="sliderRef" :show-tooltip="false" @mouseenter="mouseenter" @mousemove="mouseenter"
+            @mouseleave="mouseleave" :modelValue="value" @update:modelValue="updateVal" :formatTooltip="formatTooltip" />
         <div class="cache-pro" :style="{ width: cacheWidth + '%' }"></div>
     </div>
 </template>
@@ -29,7 +29,7 @@ const formatTooltip = (val: number) => {
     if (value.value == 100) {
         emit('emitEnd')
     }
-    return formatT(val) +  '/ ' + totalTime.value
+    return formatT(val) + ' / ' + totalTime.value
 }
 
 const sliderRef = shallowRef<HTMLAudioElement>()
@@ -75,7 +75,7 @@ const position = ref({
 })
 
 const mousemoveHandler = (e: MouseEvent) => {
-    let pe =  DOMRect.fromRect({
+    let pe = DOMRect.fromRect({
         width: 0,
         height: 0,
         x: e.clientX,
@@ -92,7 +92,7 @@ onUnmounted(() => {
 })
 
 
-const updateVal = (e:number) => {
+const updateVal = (e: number) => {
     emit('change', e)
 }
 </script>
@@ -101,9 +101,11 @@ const updateVal = (e:number) => {
     position: relative;
     align-items: center;
 }
+
 .time-progress-container :deep(.el-slider) {
     height: 0;
 }
+
 .cache-pro {
     width: 100%;
     height: 6px;

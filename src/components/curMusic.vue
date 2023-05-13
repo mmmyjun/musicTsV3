@@ -1,40 +1,43 @@
 <template>
     <div class="cur-music-container" v-if="currentPlayingObj.id">
         <div class="left" @click="getLrc(currentPlayingObj)">
-            <div class="bgImg" v-loading="currentPlayingObj.loadingLrc" :style="styleImg(currentPlayingObj)"></div>
-            <template v-if="!currentPlayingObj.loadingLrc">
+            <div class="bgImg" v-loading="currentPlayingObj.needLoadDuration" :style="styleImg(currentPlayingObj)"></div>
+            <template v-if="!currentPlayingObj.needLoadDuration">
                 <el-icon v-show="!currentPlayingObj.hasError" class="upIcon VideoPlay cursorPointer"
-                     @click.stop="toPlayAudio" v-if="!currentPlayingObj.isPlaying">
-                     <VideoPlay />
-                 </el-icon>
-                 <el-icon v-show="!currentPlayingObj.hasError" class="upIcon VideoPause cursorPointer"
-                     @click.stop="toPauseAudio" v-else>
-                     <VideoPause />
-                 </el-icon>
+                    @click.stop="toPlayAudio" v-if="!currentPlayingObj.isPlaying">
+                    <VideoPlay />
+                </el-icon>
+                <el-icon v-show="!currentPlayingObj.hasError" class="upIcon VideoPause cursorPointer"
+                    @click.stop="toPauseAudio" v-else>
+                    <VideoPause />
+                </el-icon>
             </template>
         </div>
         <div class="center">
             <div class="musicName">
-                <div class="long long-cur">{{ currentPlayingObj.loadingLrc ? '正在下载歌词..' : (!currentPlayingObj.lrc || !currentPlayingObj.lrc.length ? '暂无歌词' : currentPlayingObj.currentLong) }}</div>
+                <div class="long long-cur">{{ currentPlayingObj.loadingLrc ? '正在下载歌词..' : (!currentPlayingObj.lrc ||
+                    !currentPlayingObj.lrc.length ? '暂无歌词' : currentPlayingObj.currentLong) }}</div>
                 <div class="long-name">{{ currentPlayingObj.name }} &nbsp;<span class="artist">{{ currentPlayingObj.artist
                 }}</span></div>
             </div>
             <div class="time-progress">
                 <div class="time-pro-left">
-                    <timeProgress :currentTime="currentTime" @emitEnd="endPlay" :totalTime="totalTime"  :value="currentTWidth" :cacheWidth="cacheWidth" @change="changeCurTime" />
-                    <audio style="height: 0;opacity:0" ref="audioRef" :src="currentPlayingObj.url" @progress="propgressEvent"
-                        @loadedmetadata="loadedmetadata" @durationchange="durationchange" preload="auto" @timeupdate="changeAudio"
-                        @error="errorPlay" @play="startPlay" @ended="endPlay" @pause="pausePlay" />
+                    <timeProgress :currentTime="currentTime" @emitEnd="endPlay" :totalTime="totalTime"
+                        :value="currentTWidth" :cacheWidth="cacheWidth" @change="changeCurTime" />
+                    <audio style="height: 0;opacity:0" ref="audioRef" :src="currentPlayingObj.url"
+                        @progress="propgressEvent" @loadedmetadata="loadedmetadata" @durationchange="durationchange"
+                        preload="auto" @timeupdate="changeAudio" @error="errorPlay" @play="startPlay" @ended="endPlay"
+                        @pause="pausePlay" />
                     <musicTime :currentTime="currentTime" :totalTime="totalTime" />
                 </div>
-                <div class="time-pro-right">
-                    <volume v-if="!isMobile" class="cur-op-right" v-show="!currentPlayingObj.hasError" @change="chagneVol" />
-                    <el-tooltip  class="cur-op-right" content="播放列表" placement="top">
+                <div class="time-pro-right flexcenter">
+                    <volume v-if="!isMobile" class="cur-op-right" v-show="!currentPlayingObj.hasError"
+                        @change="chagneVol" />
+                    <el-tooltip class="cur-op-right" content="播放列表" placement="top">
                         <div class="to-play-list">
                             <svg @click="setPlayedListVisible"
                                 class="icon-m MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-i4bv87-MuiSvgIcon-root"
-                                focusable="false" aria-hidden="true" viewBox="0 0 24 24"
-                                data-testid="PlaylistPlayIcon">
+                                focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="PlaylistPlayIcon">
                                 <path d="M3 10h11v2H3zm0-4h11v2H3zm0 8h7v2H3zm13-1v8l6-4z"></path>
                             </svg>
                         </div>
@@ -63,7 +66,7 @@ const props = withDefaults(defineProps<{
     totalTime: 0,
     repeatMode: 0,
 })
-const emit = defineEmits(['getLrc','update:modelValue','update:currentTime','update:totalTime','update:repeatMode', 'playNextOne', 'setPlayedListVisible']);
+const emit = defineEmits(['getLrc', 'update:modelValue', 'update:currentTime', 'update:totalTime', 'update:repeatMode', 'playNextOne', 'setPlayedListVisible']);
 
 const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry/i.test(navigator.userAgent)
 
@@ -91,7 +94,7 @@ const currentTime = computed<number>({
 const totalTime = computed<number>({
     get: () => props.totalTime,
     set: (val) => {
-        emit("update:totalTime", val)  
+        emit("update:totalTime", val)
     }
 })
 const repeatMode = computed({
@@ -108,6 +111,7 @@ const toggleRepeatMode = (e: RepeatMode) => {
 }
 
 const getLrc = async (item: TypePlaying) => {
+    currentPlayingObj.value.needLoadDuration = true
     emit('getLrc', item)
 }
 
@@ -122,7 +126,7 @@ if (audioRef.value as HTMLAudioElement && audioRef.value?.volume) {
 }
 
 // 歌词的数据结构
-interface TypeOfLrc { 
+interface TypeOfLrc {
     text: string,
     time: number
 }
@@ -167,7 +171,7 @@ const propgressEvent = (e: Event) => {
 const errorPlay = (): void => {
     ElMessage.error(`"${currentPlayingObj.value.name}"播放错误,已移除`)
     currentPlayingObj.value.hasError = true
-     emit('playNextOne', true)
+    emit('playNextOne', true)
 }
 const startPlay = (e?: any): void => {
     currentPlayingObj.value.isPlaying = true
@@ -191,36 +195,35 @@ const toPauseAudio = (e: Event) => {
     currentPlayingObj.value.isPlaying = false
 }
 
-// duration(总时长)等信息读取到了， 已准备就绪可以开始播放了
+// duration(总时长)等信息读取到了， 已准备就绪可以开始播放了.但是兼容性没有durationchange好，所以改成后面这个方法去执行相应内容了
 const loadedmetadata = (e: Event) => {
-    console.log('loadedmetadata~~')
+    // console.log('loadedmetadata~~')
 }
 // 整个方法比loadedmetadata兼容性好
 const durationchange = (e: Event) => {
-    console.log(e, 'durationchange')
-     currentTime.value = 0
+    console.log('durationchange~~')
+    currentTime.value = 0
     let dr = audioRef.value!.duration
     totalTime.value = typeof dr == 'number' ? dr : 0
     let localV_ = localStorage.getItem('_volume');
-    if (audioRef.value?.volume) {
-        if (!localV_) {
-            localStorage.setItem('_volume', '0.4');
-        }
+    if (!localV_) {
+        localStorage.setItem('_volume', '0.4');
+        audioRef.value!.volume = 0.4;
+    } else {
         audioRef.value!.volume = Number(JSON.parse(localV_ as string))
     }
     tryToAutoPlay()
 }
 const tryToAutoPlay = async () => {
     try {
-      await audioRef.value?.play()
-      startPlay()
+        await audioRef.value?.play()
+        startPlay()
     }
     catch (err) {
         console.log('auto play failed because of browser security policy. ', err)
         errorPlay()
-        // currentTime.value = 0
-        // totalTime.value = 0
     }
+    currentPlayingObj.value.needLoadDuration = false
 }
 
 // 设置3秒后自动播放下一首
@@ -233,7 +236,7 @@ const endPlay = (event?: any): void => {
 }
 
 const playState = computed(() => {
-    return !currentPlayingObj.value.loadingLrc && currentPlayingObj.value.isPlaying ? 'running' : 'paused';
+    return !currentPlayingObj.value.needLoadDuration && currentPlayingObj.value.isPlaying ? 'running' : 'paused';
 })
 
 const styleImg = (obj: TypePlaying) => {
@@ -270,18 +273,21 @@ defineExpose({
     justify-content: center;
     align-items: center;
 }
+
 .cur-music-container .left {
     border-radius: 50%;
 }
 
 @keyframes rotate360 {
-    from{
+    from {
         transform: rotate(0deg);
     }
+
     to {
         transform: rotate(360deg);
     }
 }
+
 .cur-music-container .right {
     rotate: 90deg;
 }
@@ -290,7 +296,8 @@ defineExpose({
     width: calc(100% - 96px);
     text-align: left;
 }
-.cur-music-container .center > div {
+
+.cur-music-container .center>div {
     padding-left: 8px;
 }
 
@@ -309,10 +316,12 @@ defineExpose({
     font-size: 48px;
     z-index: 10;
 }
+
 .cur-music-container .artist {
     color: grey
 }
-.cur-music-container > div {
+
+.cur-music-container>div {
     height: 100%;
 }
 
@@ -323,6 +332,7 @@ defineExpose({
 .cur-music-container .time-progress-container {
     margin-top: 16px;
 }
+
 .cur-music-container .time-progress {
     display: flex
 }
@@ -334,25 +344,27 @@ defineExpose({
 }
 
 .time-pro-left {
-    width: 70%;
+    display: flex;
+    flex-grow: 1;
     line-height: 42px;
     height: 42px;
-    display: flex;
     flex-direction: column;
 }
+
 .time-pro-right {
-    display: flex;
-    width: 30%;
+
 }
 
 .time-pro-right>div {
     width: 40px;
     text-align: center;
 }
+
 .artist {
     font-size: 12px;
     color: rgba(0, 0, 0, 0.6);
 }
+
 .long-cur {
     overflow: hidden;
     text-overflow: ellipsis;
