@@ -36,7 +36,7 @@
                     </div>
                 </slot>
                 <slot name="rightContent" :row="item">
-                    <div class="right">
+                    <div class="right right-op-dropdown">
                         <el-icon><MoreFilled /></el-icon>
                     </div>
                 </slot>
@@ -87,6 +87,7 @@ const errorLoadImg = (e: Error):void => {
     align-items: center;
     border-bottom: 1px solid rgba(0, 0, 0, 0.12);
     height: 50px;
+    padding-left: 8px;
 }
 .left, .right {
     width: 44px;
@@ -101,7 +102,7 @@ const errorLoadImg = (e: Error):void => {
     rotate: 90deg;
 }
 .center {
-    width: calc(100% - 96px);
+    width: calc(100% - 46px);
     text-align: left;
     padding-left: 8px;
 }

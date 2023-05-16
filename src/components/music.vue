@@ -24,7 +24,7 @@
                 <musicListComp v-if="musicList.length" :currentPlayingObj="currentPlayingObj" :modelValue="musicList"
                     @getLrc="getLrc">
                     <template #rightContent="{ row }">
-                        <el-dropdown trigger="click" @command="handleCommand($event, row)">
+                        <el-dropdown style="width: 40px"  class="list-action-right" trigger="click" @command="handleCommand($event, row)">
                             <el-icon class="more-action black">
                                 <MoreFilled />
                             </el-icon>
@@ -40,9 +40,9 @@
                 </musicListComp>
 
                 <div class="bottom-list" :class="{ active: musicPlayed.length && showPlayedListVisible }">
-                    <curMusic ref="curMusicRef" @setPlayedListVisible="setPlayedListVisible" @getLrc="getLrc"
+                    <curMusic v-if="currentPlayingObj.id" ref="curMusicRef" @setPlayedListVisible="setPlayedListVisible" @getLrc="getLrc"
                         @setMusicPlayed="setMusicPlayed" @playNextOne="nextPlay" v-model:modelValue="currentPlayingObj"
-                        v-model:currentTime="currentTime" v-model:totalTime="totalTime" v-model:repeatMode="repeatMode">
+                        v-model:currentTime="currentTime" v-model:totalTime="totalTime" v-model:repeatMode="repeatMode" v-model:cacheWidth="cacheWidth">
                     </curMusic>
 
                     <div class="playedList-container" v-if="musicPlayed.length && showPlayedListVisible">
@@ -50,7 +50,7 @@
                         <musicListComp hideListNumResult :currentPlayingObj="currentPlayingObj" class="playedList-lists"
                             :modelValue="musicPlayed" @getLrc="getLrc">
                             <template #rightContent="{ row }">
-                                <el-dropdown trigger="click" @command="handleCommand($event, row)">
+                                <el-dropdown style="width: 40px" class="list-action-right" trigger="click" @command="handleCommand($event, row)">
                                     <el-icon class="more-action">
                                         <MoreFilled />
                                     </el-icon>
@@ -130,6 +130,8 @@ if (localHis.length) {
     }
     musicPlayed.value = localHis
 }
+
+const cacheWidth = ref(0)
 
 onMounted(() => {
     getLrc(currentPlayingObj.value)
@@ -212,16 +214,17 @@ const getLrc = async (item: TypePlaying) => {
             let curIsPlay = currentPlayingObj.value.isPlaying
             if (curIsPlay) {
                 currentPlayingObj.value.isPlaying = false
-                curMusicRef.value?.toPauseAudio()
+                curMusicRef.value && curMusicRef.value?.toPauseAudio()
             } else {
                 currentPlayingObj.value.isPlaying = true
-                curMusicRef.value?.tryToAutoPlay()
+                curMusicRef.value && curMusicRef.value?.tryToAutoPlay()
             }
             currentPlayingObj.value.loadingLrc = false
             if (exist[0].lrc && exist[0].lrc.length) return
         } else {
             currentTime.value = 0;
             totalTime.value = 0;
+            cacheWidth.value = 0
 
             let existLrc = exist[0].lrc
             let lastLrc = existLrc && existLrc.length ? existLrc : []
@@ -238,6 +241,9 @@ const getLrc = async (item: TypePlaying) => {
         setLocal(currentPlayingObj.value)
     }
     if (!item.lrc || !item.lrc.length || !currentPlayingObj.value.lrc || !currentPlayingObj.value.lrc.length) {
+        currentTime.value = 0;
+        totalTime.value = 0;
+        cacheWidth.value = 0;
         currentPlayingObj.value = {
             ...item,
             lrc: [],
@@ -322,18 +328,18 @@ const setMusicPlayed = (arg: TypePlaying[]) => {
 }
 const clearCacheData = () => {
     ElMessageBox.confirm(
-        'confirm?',
-        'tooltip',
+        '确认清除所有缓存数据?',
+        '提示',
         {
-            confirmButtonText: 'OK',
-            cancelButtonText: 'Cancel',
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
             type: 'warning',
         }
     )
         .then(() => {
             ElMessage({
                 type: 'success',
-                message: 'Delete completed',
+                message: '清除完毕!',
             })
             keyword.value = ''
             musicPlayed.value = []
@@ -459,5 +465,9 @@ const handleCommand = (command: string | number | object, row?: TypePlaying) => 
 
 .playedList-container .lists {
     border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.list-action-right .more-action{
+    margin: 0 auto;
 }
 </style>

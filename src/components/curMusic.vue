@@ -33,7 +33,7 @@
                 <div class="time-pro-right flexcenter">
                     <volume v-if="!isMobile" class="cur-op-right" v-show="!currentPlayingObj.hasError"
                         @change="chagneVol" />
-                    <el-tooltip class="cur-op-right" content="播放列表" placement="top">
+                    <el-tooltip class="cur-op-right" content="播放列表" placement="top" hide-after="100">
                         <div class="to-play-list">
                             <svg @click="setPlayedListVisible"
                                 class="icon-m MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-i4bv87-MuiSvgIcon-root"
@@ -61,12 +61,14 @@ const props = withDefaults(defineProps<{
     currentTime: number;
     totalTime: number;
     repeatMode: number;
+    cacheWidth: number,
 }>(), {
     currentTime: 0,
     totalTime: 0,
     repeatMode: 0,
+    cacheWidth: 0,
 })
-const emit = defineEmits(['getLrc', 'update:modelValue', 'update:currentTime', 'update:totalTime', 'update:repeatMode', 'playNextOne', 'setPlayedListVisible']);
+const emit = defineEmits(['getLrc', 'update:modelValue', 'update:currentTime', 'update:totalTime', 'update:repeatMode','update:cacheWidth', 'playNextOne', 'setPlayedListVisible']);
 
 const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry/i.test(navigator.userAgent)
 
@@ -101,6 +103,12 @@ const repeatMode = computed({
     get: () => props.repeatMode,
     set: (val) => {
         emit("update:repeatMode", val)
+    }
+})
+const cacheWidth = computed({
+    get: () => props.cacheWidth,
+    set: (val) => {
+        emit("update:cacheWidth", val)
     }
 })
 
@@ -150,7 +158,6 @@ const currentTWidth = computed(() => {
     let last: number = Number((pre / suf).toFixed(2)) * 100
     return last ? last : 0
 })
-const cacheWidth = ref(0)
 const changeCurTime = (e: number) => {
     let curT = parseInt(String(e * totalTime.value / 100))
     currentTime.value = curT
@@ -276,6 +283,8 @@ defineExpose({
 
 .cur-music-container .left {
     border-radius: 50%;
+    box-sizing: border-box;
+    padding: 5px;
 }
 
 @keyframes rotate360 {

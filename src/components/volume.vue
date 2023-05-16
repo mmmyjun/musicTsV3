@@ -1,6 +1,6 @@
 <template>
     <div class="volumn-comp">
-        <el-dropdown trigger="click">
+        <el-dropdown trigger="click" placement="top">
             <span class="icon-origin">
                 <el-icon class="icon-m" v-if="!value">
                     <svg focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="VolumeOffIcon">
