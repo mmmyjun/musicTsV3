@@ -176,9 +176,14 @@ const propgressEvent = (e: Event) => {
 }
 
 const errorPlay = (): void => {
-    ElMessage.error(`"${currentPlayingObj.value.name}"播放错误,已移除`)
+    if (currentPlayingObj.value.errorTime == 1) {
+        emit('playNextOne', false)
+        ElMessage.error(`"${currentPlayingObj.value.name}"播放错误,已移除`)
+    } else {
+        currentPlayingObj.value.errorTime = 1
+        emit('playNextOne', true)
+    }
     currentPlayingObj.value.hasError = true
-    emit('playNextOne', true)
 }
 const startPlay = (e?: any): void => {
     currentPlayingObj.value.isPlaying = true

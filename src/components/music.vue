@@ -148,7 +148,10 @@ const toSearch = (): void => {
             return res.json()
         }
     }).then(e => {
-        musicList.value = e ? e.data : []
+        musicList.value = e ? e.data.map((e: TypePlaying) => ({
+            ...e,
+            url: e.url + '?t=' + Date.now()
+        })) : []
     }).finally(() => {
         loadingList.value = false
     })
