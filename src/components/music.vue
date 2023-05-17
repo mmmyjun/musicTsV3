@@ -238,11 +238,12 @@ const getLrc = async (item: TypePlaying) => {
                 loadingLrc: false,
                 needLoadDuration: true
             }
-            document.title = currentPlayingObj.value.name
         }
     } else {
         setLocal(currentPlayingObj.value)
     }
+    document.title = currentPlayingObj.value.name
+    
     if (!item.lrc || !item.lrc.length || !currentPlayingObj.value.lrc || !currentPlayingObj.value.lrc.length) {
         currentTime.value = 0;
         totalTime.value = 0;
@@ -264,7 +265,6 @@ const getLrc = async (item: TypePlaying) => {
             currentPlayingObj.value.lrc = e ? e.data : []
             currentPlayingObj.value.isPlaying = true
 
-            document.title = currentPlayingObj.value.name
             setLocal(currentPlayingObj.value)
         }).catch(e => {
             console.log('catch lrc', e)
