@@ -17,7 +17,7 @@
             <div class="musicName">
                 <div class="long long-cur">{{ currentPlayingObj.loadingLrc ? '正在下载歌词..' : (!currentPlayingObj.lrc ||
                     !currentPlayingObj.lrc.length ? '暂无歌词' : currentPlayingObj.currentLong) }}</div>
-                <div class="long-name">{{ currentPlayingObj.name }} &nbsp;<span class="artist">{{ currentPlayingObj.artist
+                <div class="long-name textHiddenEllipsis">{{ currentPlayingObj.name }} &nbsp;<span class="artist">{{ currentPlayingObj.artist
                 }}</span></div>
             </div>
             <div class="time-progress">
@@ -144,12 +144,12 @@ const changeAudio = (e: Event) => {
     }
     let idx = -1
     if (audioRef.value && audioRef.value!.currentTime && typeof audioRef.value!.currentTime == 'number' && currentPlayingObj.value.lrc && currentPlayingObj.value.lrc.length) {
-        idx = JSON.parse(JSON.stringify(currentPlayingObj.value.lrc)).reverse().findIndex((f: TypePlaying) => f.time <= audioRef.value!.currentTime)
+        idx = JSON.parse(JSON.stringify(currentPlayingObj.value.lrc)).findIndex((f: TypePlaying) => f.time >= audioRef.value!.currentTime)
     }
     if (idx == -1) {
         return
     };
-    currentPlayingObj.value.currentLong = currentPlayingObj.value.lrc[idx].text
+    currentPlayingObj.value.currentLong = currentPlayingObj.value.lrc[idx > 0 ? idx -1 : 0].text
 }
 
 const currentTWidth = computed(() => {
@@ -329,6 +329,7 @@ defineExpose({
     height: 100%;
     font-size: 48px;
     z-index: 10;
+    border-radius: 50%;
 }
 
 .cur-music-container .artist {

@@ -41,16 +41,20 @@ const dialogVisible = computed({
     padding: 6px;
     color: #fff !important;
 }
+.loading-circle-container .left {
+    padding: 0;
+}
 .loading-circle-container .right {
-    color: #000
+    color: #000;
+    padding-right: 2px;
 }
 </style>
 <style scoped>
 .outer-circle {
-    width: 28px;
-    height: 28px;
+    width: 26px;
+    height: 26px;
     border: 1px solid gainsboro;
-    background-image: linear-gradient(#ff00f8, #cece52,pink,green, blue);;
+    background-image: linear-gradient(rgb(255, 10, 51), blue);;
     animation: circleBig 1s ease infinite;
     display: flex;
     justify-content: center;
@@ -66,11 +70,11 @@ const dialogVisible = computed({
 }
 @keyframes circleBig {
     from {
-        transform: scale(0.3);
+        transform: scale(0.2);
         opacity: 1;
     }
     to {
-        transform: scale(0.9);
+        transform: scale(0.8);
         opacity: 0;
     }
 }

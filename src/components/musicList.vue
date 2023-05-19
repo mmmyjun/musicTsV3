@@ -35,11 +35,11 @@
                         </div>
                     </div>
                 </slot>
-                <slot name="rightContent" :row="item">
-                    <div class="right right-op-dropdown">
+                <div class="right right-op-dropdown">
+                    <slot name="rightContent" :row="item">
                         <el-icon><MoreFilled /></el-icon>
-                    </div>
-                </slot>
+                    </slot>
+                </div>
             </slot>
         </div>
     </div>
@@ -78,7 +78,7 @@ const errorLoadImg = (e: Error):void => {
 
 <style scoped>
 .music-list-container {
-    height: 100%;
+    /* height: 100%; */
     background: #fff;
 }
 .lists {
@@ -86,8 +86,7 @@ const errorLoadImg = (e: Error):void => {
     justify-content: center;
     align-items: center;
     border-bottom: 1px solid rgba(0, 0, 0, 0.12);
-    height: 50px;
-    padding-left: 8px;
+    height: 56px;
 }
 .left, .right {
     width: 44px;
@@ -95,16 +94,21 @@ const errorLoadImg = (e: Error):void => {
     position: relative;
     border-radius: 50%;
 }
+.left {
+    padding: 0 8px;
+}
 .left :deep(img) {
     border-radius: 50%;
 }
 .right {
-    rotate: 90deg;
+    display: flex;
+    align-items: center;
 }
 .center {
-    width: calc(100% - 46px);
+    max-width: calc(100% - 104px);
     text-align: left;
     padding-left: 8px;
+    flex-grow: 1;
 }
 img {
     width: 100%;

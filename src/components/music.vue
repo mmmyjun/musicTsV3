@@ -24,7 +24,7 @@
                 <musicListComp v-if="musicList.length" :currentPlayingObj="currentPlayingObj" :modelValue="musicList"
                     @getLrc="getLrc">
                     <template #rightContent="{ row }">
-                        <el-dropdown style="width: 40px"  class="list-action-right" trigger="click" @command="handleCommand($event, row)">
+                        <el-dropdown style="width:100%"  class="list-action-right" trigger="click" @command="handleCommand($event, row)">
                             <el-icon class="more-action black">
                                 <MoreFilled />
                             </el-icon>
@@ -50,7 +50,7 @@
                         <musicListComp hideListNumResult :currentPlayingObj="currentPlayingObj" class="playedList-lists"
                             :modelValue="musicPlayed" @getLrc="getLrc">
                             <template #rightContent="{ row }">
-                                <el-dropdown style="width: 40px" class="list-action-right" trigger="click" @command="handleCommand($event, row)">
+                                <el-dropdown style="width:100%" class="list-action-right" trigger="click" @command="handleCommand($event, row)">
                                     <el-icon class="more-action">
                                         <MoreFilled />
                                     </el-icon>
@@ -253,7 +253,7 @@ const getLrc = async (item: TypePlaying) => {
             lrc: [],
             isPlaying: false,
             loadingLrc: true,
-            needLoadDuration: true
+            needLoadDuration: false
         }
 
         await fetch('/api/music/lrc/' + item.id).then(res => {
@@ -415,6 +415,7 @@ const handleCommand = (command: string | number | object, row?: TypePlaying) => 
     position: fixed;
     bottom: 0;
     width: 100%;
+    max-width: 1280px;
 }
 
 .list-container.activeHeight .music-list-container {
