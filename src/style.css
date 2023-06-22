@@ -180,3 +180,7 @@ button:focus-visible {
   justify-content: center;
   align-items: center;
 }
+
+.el-slider__button-wrapper {
+  transition: all .1s linear;
+}

@@ -254,7 +254,7 @@ const playState = computed(() => {
 const styleImg = (obj: TypePlaying) => {
     return {
         backgroundImage: `url(${obj.poster})`,
-        animation: '7s linear infinite rotate360 ' + playState.value
+        animation: '10s linear infinite rotate360 ' + playState.value
     }
 }
 

@@ -13,9 +13,9 @@ export default defineConfig({
   server: {
     proxy: {
       '/api': {
-        target: 'http://192.168.10.104:8000',
+        // target: 'http://192.168.10.104:8000',
         // target: 'https://apps.gatsbyjs.io',
-        // target: 'ttps://www.stormkit.dev',
+        target: 'https://mediaapp-1-h6441563.deta.app',
         changeOrigin: true,
         // rewrite: (path) => path.replace(/^\/api/, ''),
       },

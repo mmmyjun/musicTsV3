@@ -17,22 +17,22 @@ const playState = computed(() => {
 })
 const selfStyle = computed((e) => {
     return {
-        animation: '.5s linear .8s infinite alternate slidein ' + playState.value
+        animation: '.7s linear 0s infinite alternate slidein ' + playState.value
     }
 })
 const selfStyleB = computed((e) => {
     return {
-        animation: '.5s linear .6s infinite alternate slidein ' + playState.value
+        animation: '.7s linear .3s infinite alternate slidein ' + playState.value
     }
 })
 const selfStyleC = computed((e) => {
     return {
-        animation: '.5s linear .4s infinite alternate slidein ' + playState.value
+        animation: '.7s linear .6s infinite alternate slidein ' + playState.value
     }
 })
 const selfStyleD = computed((e) => {
     return {
-        animation: '.5s linear 0s infinite alternate slidein ' + playState.value
+        animation: '.7s linear .9s infinite alternate slidein ' + playState.value
     }
 })
 
