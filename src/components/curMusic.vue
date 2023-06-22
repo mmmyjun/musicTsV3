@@ -153,9 +153,9 @@ const changeAudio = (e: Event) => {
 }
 
 const currentTWidth = computed(() => {
-    let pre: number = Math.ceil(currentTime.value);
-    let suf: number = Math.ceil(totalTime.value);
-    let last: number = Number((pre / suf).toFixed(2)) * 100
+    let pre: number = currentTime.value;
+    let suf: number = totalTime.value;
+    let last: number = (pre / suf) * 100;
     return last ? last : 0
 })
 const changeCurTime = (e: number) => {
