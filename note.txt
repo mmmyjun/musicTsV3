@@ -186,3 +186,8 @@ dist/js/_@element-plus-e3033a64.js   195.37 kB │ gzip:  54.67 kB
 dist/js/_element-plus-3af5bc5a.js    631.40 kB │ gzip: 196.93 kB
  built in 41.80s
 这里会导致总时长变长，所以暂时标记下，不见得动态组件一定是优化打包的好方式!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+
+
+npm install -D tailwindcss
+npx tailwindcss -i test.css -o output.css --watch
