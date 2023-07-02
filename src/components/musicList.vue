@@ -22,7 +22,9 @@
                                 </el-skeleton>
                             </template>
                         </el-image>
-                        <reactJump v-show="item.id === currentPlayingObj.id" :running="!currentPlayingObj.needLoadDuration && (item.id === currentPlayingObj.id) && currentPlayingObj.isPlaying" />
+                        <div class="playingAnimation">
+                            <reactJump v-show="item.id === currentPlayingObj.id" :running="!currentPlayingObj.needLoadDuration && (item.id === currentPlayingObj.id) && currentPlayingObj.isPlaying" />
+                        </div>
                     </div>
                 </slot>
                 <slot name="centerContent" :row="item">
@@ -45,8 +47,8 @@
     </div>
 </template>
 <script setup lang="ts">
-import { computed, withDefaults } from "vue"
-import reactJump from './reactJump.vue'
+import { computed } from "vue"
+import reactJump from './reactJump.vue';
 
 const props = withDefaults(defineProps<{
     modelValue: Array<TypePlaying>;
@@ -65,7 +67,7 @@ const clickLeftIcon = (item: Object):void => {
     emits('getLrc', item)
 }
 const errorLoadImg = (e: Error):void => {
-    console.log(e)
+    // console.log(e)
 }
 
 </script>
@@ -95,10 +97,17 @@ const errorLoadImg = (e: Error):void => {
     border-radius: 50%;
 }
 .left {
-    padding: 0 8px;
+    /* padding: 0 8px; */
 }
 .left :deep(img) {
     border-radius: 50%;
+}
+.playingAnimation {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 36px;
+    height: 36px;
 }
 .right {
     display: flex;

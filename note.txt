@@ -191,3 +191,11 @@ dist/js/_element-plus-3af5bc5a.js    631.40 kB │ gzip: 196.93 kB
 
 npm install -D tailwindcss
 npx tailwindcss -i test.css -o output.css --watch
+常用插件：
+autoprefixer:添加浏览器前缀、
+postcss-import：对我们多个css文件进行合并、
+cssnano：css压缩、
+postcss-cssnext：让浏览器兼容比较高级css语法，也就是所谓的优雅降级、
+stylelint：检测语法规范、
+postcss-sprites：自动生成精灵图，并在编译后的css中，自动出现坐标。
+postcss-nesting 来支持 css 嵌套使用

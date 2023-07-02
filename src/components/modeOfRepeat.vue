@@ -31,8 +31,8 @@ const toggleRepeatMode = (e: number) => {
 </script>
 <style scoped>
 .rect-jump-comp {
-    width: 28px;
-    height: 28px;
+    width: 36px;
+    height: 36px;
     display: flex;
     background: transparent;
     border-radius: 50%;

@@ -33,7 +33,7 @@
                 <div class="time-pro-right flexcenter">
                     <volume v-if="!isMobile" class="cur-op-right" v-show="!currentPlayingObj.hasError"
                         @change="chagneVol" />
-                    <el-tooltip class="cur-op-right" content="播放列表" placement="top" hide-after="100">
+                    <el-tooltip class="cur-op-right" content="播放列表" placement="top" :hide-after="100">
                         <div class="to-play-list">
                             <svg @click="setPlayedListVisible"
                                 class="icon-m MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-i4bv87-MuiSvgIcon-root"
@@ -49,7 +49,7 @@
     </div>
 </template>
 <script setup lang="ts">
-import { ref, shallowRef, computed, withDefaults } from "vue"
+import { ref, shallowRef, computed } from "vue"
 import { ElMessage } from 'element-plus'
 import volume from './volume.vue'
 import modeOfRepeat from './modeOfRepeat.vue'
@@ -211,11 +211,14 @@ const toPauseAudio = (e: Event) => {
 const loadedmetadata = (e: Event) => {
     // console.log('loadedmetadata~~')
 }
+
 // 整个方法比loadedmetadata兼容性好
 const durationchange = (e: Event) => {
     console.log('durationchange~~')
+    if (!audioRef.value) return;
+    
     currentTime.value = 0
-    let dr = audioRef.value!.duration
+    let dr = audioRef.value.duration || 0;
     totalTime.value = typeof dr == 'number' ? dr : 0
     let localV_ = localStorage.getItem('_volume');
     if (!localV_) {
@@ -224,10 +227,16 @@ const durationchange = (e: Event) => {
     } else {
         audioRef.value!.volume = Number(JSON.parse(localV_ as string))
     }
-    tryToAutoPlay()
+
+    if (!currentPlayingObj.value.firstInit) {
+        // currentPlayingObj.value.firstInit = false
+        tryToAutoPlay()
+    }
+    
 }
 const tryToAutoPlay = async () => {
     try {
+        currentPlayingObj.value.isPlaying = true;
         await audioRef.value?.play()
         startPlay()
     }

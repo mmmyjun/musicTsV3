@@ -6,7 +6,7 @@
             <div class="search-container">
                 <el-input v-model="keyword" clearable placeholder="输入歌名/歌手名开始搜索" @keyup.enter="toSearch">
                     <template #append>
-                        <el-button type="primary" :disabled="!keyword.trim()" :icon="Search" @click="toSearch" />
+                        <el-button type="primary" class="btn testWind" :disabled="!keyword.trim()" :icon="Search" @click="toSearch" />
                     </template>
                 </el-input>
                 <el-dropdown class="op-global" trigger="click" @command="handleCommand">
@@ -111,6 +111,7 @@ const currentPlayingObj = ref<TypePlaying>({
     poster: '',
     lrc: [],
     loadingLrc: false,
+    firstInit: true,
     needLoadDuration: true // duration总时长加载好后才代表歌曲可以被播放了，为true是正在加载得意思
 })
 
@@ -126,7 +127,8 @@ if (localHis.length) {
         ...localHis[0],
         isPlaying: false,
         loadingLrc: false,
-        needLoadDuration: true
+        needLoadDuration: true,
+        firstInit: true
     }
     musicPlayed.value = localHis
 }
@@ -172,9 +174,10 @@ const setLocal = (item: TypePlaying, removeId?: number | string) => {
             if (musicPlayed.value.length) {
                 currentPlayingObj.value = {
                     ...musicPlayed.value[0],
-                    isPlaying: true,
+                    isPlaying: !currentPlayingObj.value.firstInit,
                     lrc: currentPlayingObj.value.lrc,
                     loadingLrc: false,
+                    firstInit: currentPlayingObj.value.firstInit,
                 }
             }
             return
@@ -219,8 +222,15 @@ const getLrc = async (item: TypePlaying) => {
                 currentPlayingObj.value.isPlaying = false
                 curMusicRef.value && curMusicRef.value?.toPauseAudio()
             } else {
-                currentPlayingObj.value.isPlaying = true
-                curMusicRef.value && curMusicRef.value?.tryToAutoPlay()
+                if (!currentPlayingObj.value.firstInit) {
+                    currentPlayingObj.value.isPlaying = true
+                    curMusicRef.value && curMusicRef.value?.tryToAutoPlay()
+                } else {
+                    currentPlayingObj.value.isPlaying = false;
+                    // if (!(!item.lrc || !item.lrc.length || !currentPlayingObj.value.lrc || !currentPlayingObj.value.lrc.length)) {
+                    //     currentPlayingObj.value.firstInit = false;
+                    // }
+                }
             }
             currentPlayingObj.value.loadingLrc = false
             if (exist[0].lrc && exist[0].lrc.length) return
@@ -233,11 +243,16 @@ const getLrc = async (item: TypePlaying) => {
             let lastLrc = existLrc && existLrc.length ? existLrc : []
             currentPlayingObj.value = {
                 ...exist[0],
-                isPlaying: true,
+                isPlaying: !currentPlayingObj.value.firstInit,
                 lrc: lastLrc,
                 loadingLrc: false,
-                needLoadDuration: true
+                needLoadDuration: true,
+                firstInit: currentPlayingObj.value.firstInit
             }
+            // if (!(!item.lrc || !item.lrc.length || !currentPlayingObj.value.lrc || !currentPlayingObj.value.lrc.length)) {
+            //     // currentPlayingObj.value.isPlaying = false
+            //     currentPlayingObj.value.firstInit = false;
+            // }
         }
     } else {
         setLocal(currentPlayingObj.value)
@@ -253,7 +268,8 @@ const getLrc = async (item: TypePlaying) => {
             lrc: [],
             isPlaying: false,
             loadingLrc: true,
-            needLoadDuration: false
+            needLoadDuration: false,
+            firstInit: currentPlayingObj.value.firstInit
         }
 
         await fetch('/api/music/lrc/' + item.id).then(res => {
@@ -263,7 +279,7 @@ const getLrc = async (item: TypePlaying) => {
             }
         }).then(e => {
             currentPlayingObj.value.lrc = e ? e.data : []
-            currentPlayingObj.value.isPlaying = true
+            currentPlayingObj.value.isPlaying = !currentPlayingObj.value.firstInit;
 
             setLocal(currentPlayingObj.value)
         }).catch(e => {
@@ -271,6 +287,8 @@ const getLrc = async (item: TypePlaying) => {
             currentPlayingObj.value.isPlaying = false
         }).finally(() => {
             currentPlayingObj.value.loadingLrc = false
+            currentPlayingObj.value.firstInit = false
+
         })
     }
 }
@@ -294,7 +312,8 @@ const nextPlay = (hasErrorPlay?: boolean): void => {
                 ...musicPlayed.value[0],
                 hasError: false,
                 isPlaying: true,
-                lrc: currentPlayingObj.value.lrc
+                lrc: currentPlayingObj.value.lrc,
+                firstInit: currentPlayingObj.value.firstInit
             }
             showPlayedListVisible.value = true
         }
@@ -353,7 +372,8 @@ const clearCacheData = () => {
                 artist: '',
                 poster: '',
                 lrc: [],
-                loadingLrc: false
+                loadingLrc: false,
+                firstInit: currentPlayingObj.value.firstInit
             }
             showPlayedListVisible.value = false
             musicList.value = []

@@ -2,7 +2,7 @@
     <div class="time-progress-container" ref="timeProgressContainerRef">
         <el-tooltip v-model:visible="visible" :content="ganTip" placement="top" effect="dark" trigger="click"
             virtual-triggering :virtual-ref="triggerRef" />
-        <el-slider step="0.01" class="slider-ref" ref="sliderRef" :show-tooltip="false" @mouseenter="mouseenter" @mousemove="mouseenter"
+        <el-slider :step="0.01" class="slider-ref" ref="sliderRef" :show-tooltip="false" @mouseenter="mouseenter" @mousemove="mouseenter"
             @mouseleave="mouseleave" :modelValue="value" @update:modelValue="updateVal" :formatTooltip="formatTooltip" />
         <div class="cache-pro" :style="{ width: cacheWidth + '%' }"></div>
     </div>
