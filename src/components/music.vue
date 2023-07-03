@@ -1,7 +1,6 @@
 <template>
     <div class="music-container">
         <loadingGlobal v-model:loading="loadingList" />
-
         <div class="music-inner">
             <div class="search-container">
                 <el-input v-model="keyword" clearable placeholder="输入歌名/歌手名开始搜索" @keyup.enter="toSearch">

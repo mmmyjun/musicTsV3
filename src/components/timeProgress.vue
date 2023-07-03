@@ -1,9 +1,9 @@
 <template>
-    <div class="time-progress-container" ref="timeProgressContainerRef">
+    <div class="time-progress-container" ref="timeProgressContainerRef" @mousemove="mousemoveHandler">
         <el-tooltip v-model:visible="visible" :content="ganTip" placement="top" effect="dark" trigger="click"
             virtual-triggering :virtual-ref="triggerRef" />
-        <el-slider step="0.01" class="slider-ref" ref="sliderRef" :show-tooltip="false" @mouseenter="mouseenter" @mousemove="mouseenter"
-            @mouseleave="mouseleave" :modelValue="value" @update:modelValue="updateVal" :formatTooltip="formatTooltip" />
+        <el-slider :step=".0001" class="slider-ref" ref="sliderRef" :show-tooltip="false" @mouseenter="mouseenter"
+            @mousemove="mouseenter" @mouseleave="mouseleave" :modelValue="value" @update:modelValue="updateVal" />
         <div class="cache-pro" :style="{ width: cacheWidth + '%' }"></div>
     </div>
 </template>
@@ -53,7 +53,7 @@ const mouseenter = (e: MouseEvent) => {
         visible.value = true
         let percent = Number(firstP / (timeProgressContainerRef.value?.clientWidth || 1)) || 0
         let curT = Number(totalTime.value) * percent
-        ganTip.value = formatT(curT) + '/ ' + formatT(totalTime.value)
+        ganTip.value = formatT(curT) + ' / ' + formatT(totalTime.value)
     })
 
 }
@@ -62,35 +62,28 @@ const mouseleave = (e: Event) => {
 }
 
 const visible = ref(false)
-const triggerRef = ref({
-    getBoundingClientRect() {
-        return position.value
-    },
-})
 const position = ref({
     top: 0,
     left: 0,
     bottom: 0,
     right: 0,
 })
+const triggerRef = ref({
+    getBoundingClientRect() {
+        return position.value
+    },
+})
 
 const mousemoveHandler = (e: MouseEvent) => {
+    const rect = (e.target as HTMLDivElement).getBoundingClientRect()
     let pe = DOMRect.fromRect({
         width: 0,
         height: 0,
         x: e.clientX,
-        y: e.clientY,
+        y: rect.y,
     })
     position.value = pe
 }
-onMounted(() => {
-    document.addEventListener('mousemove', mousemoveHandler)
-})
-
-onUnmounted(() => {
-    document.removeEventListener('mousemove', mousemoveHandler)
-})
-
 
 const updateVal = (e: number) => {
     emit('change', e)

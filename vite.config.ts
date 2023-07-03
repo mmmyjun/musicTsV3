@@ -15,7 +15,7 @@ export default defineConfig({
       '/api': {
         // target: 'http://192.168.10.104:8000',
         // target: 'https://apps.gatsbyjs.io',
-        target: 'https://mediaapp-1-h6441563.deta.app',
+        target: 'https://mediaapp-1-w5571626.deta.app',
         changeOrigin: true,
         // rewrite: (path) => path.replace(/^\/api/, ''),
       },
